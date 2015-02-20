@@ -1,18 +1,19 @@
 package io.shaka.jetty
 
-import EmbededJetty.ToLog
+import EmbeddedJetty.ToLog
 import java.io.File
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
 import org.eclipse.jetty.webapp.WebAppContext
 
-object EmbededJetty{
+object EmbeddedJetty{
   type ToLog = String => Unit
   private val doNothingLog: ToLog = _ => ()
-  def jetty(config: JettyConfiguration, log: ToLog = doNothingLog) = new EmbededJetty(config, log)
+  def jetty: EmbeddedJetty = jetty(JettyConfiguration())
+  def jetty(config: JettyConfiguration, log: ToLog = doNothingLog): EmbeddedJetty = new EmbeddedJetty(config, log)
 }
 
-class EmbededJetty private(config: JettyConfiguration, otherLog: ToLog) {
+class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
   private val server = new Server()
   private val connector = createConnector
   server.setConnectors(Array(connector))
