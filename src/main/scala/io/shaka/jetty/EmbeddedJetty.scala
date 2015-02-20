@@ -10,6 +10,7 @@ object EmbeddedJetty{
   type ToLog = String => Unit
   private val doNothingLog: ToLog = _ => ()
   def jetty: EmbeddedJetty = jetty(JettyConfiguration())
+  def jetty(port: Int): EmbeddedJetty = jetty(JettyConfiguration(port = port))
   def jetty(config: JettyConfiguration, log: ToLog = doNothingLog): EmbeddedJetty = new EmbeddedJetty(config, log)
 }
 
