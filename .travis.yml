@@ -1,0 +1,13 @@
+language: scala
+scala:
+- 2.10.4
+jdk:
+- oraclejdk7
+env:
+  global:
+  - LIB_VERSION=$TRAVIS_BUILD_NUMBER
+  - secure: GzZ5xd0ArHlk878yboQLkJYVwerm7Eq+aof2ocLc5TLAPE1di45ERHX7RBzoaN5WWLxHmQo/sF1DaTOjmisyPZDcN4zkQ1jWBs+mSpeSteYgfmCLb5aZINeVSZ9Hhu7AvudQFWzJdx7OQX1ojyIxiTsEl+XCbqV4FmD/aSZxp8w=
+  - secure: CZnBchvAB0o1zd2lkn8hbcTyWicsRNAbG58pOJcyeQCAEeHnbT65P4P+QbkQr57Le6dRsVSqoGdxOaViUgRQR545n7Av06K8baw+N/W4DIYeb6SDl/9b6WF0n9oDi/0UdB7rawSRvME6iUDHmFc0x1RG5A1LT1g2jar8lu0Jzgg=
+  - secure: fiSsiMm2grufn32L9hcl5Z1kgjwV2Q/CeKklTH+UZShYf0J4Mb1Cn2LrEOXycUucWbGM+dfMX5za/o+AJ7xBT596k7rFHFV+Xy/UfdDx0L3zsZrafqa2gMOEq2ubQDvYciGRy9HdQ5m+pZFn+usp78FMQDh0Qc1AKlo/YTLbLME=
+before_script: ./publish/bintray.sh
+script: sbt test +publishSigned
