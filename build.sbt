@@ -16,9 +16,9 @@ crossScalaVersions := Seq("2.10.4", "2.11.5")
 val jettyVersion = "9.2.7.v20150116"
 
 libraryDependencies ++= Seq(
-  "org.eclipse.jetty" % "jetty-webapp" % jettyVersion,
-  "org.eclipse.jetty" % "jetty-plus" % jettyVersion,
-  "org.eclipse.jetty" % "jetty-servlets" % jettyVersion,
+  "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
+  "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
+  "org.eclipse.jetty" % "jetty-servlets" % jettyVersion % "provided",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
