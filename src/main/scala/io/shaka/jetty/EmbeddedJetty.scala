@@ -57,7 +57,7 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
 
   private def createHandlers = {
     val context = {
-      val warPath = new WebAppContext().getClass.getClassLoader.getResource("webapp").toExternalForm
+      val warPath = config.webappLocation
       log(s"EMBEDDED JETTY >>> running webapp from $warPath")
       val ctx = new WebAppContext()
       ctx.setContextPath(config.context)
