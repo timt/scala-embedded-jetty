@@ -13,13 +13,14 @@ scalaVersion := "2.11.5"
 
 crossScalaVersions := Seq("2.10.4", "2.11.5")
 
-val jettyVersion = "9.2.7.v20150116"
+val jettyVersion = "9.2.9.v20150224"
 
 libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-servlets" % jettyVersion % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+  "io.shaka" %% "naive-http" % "66" % "test"
 )
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)

@@ -16,7 +16,7 @@ object JettyConfigurationDefaults {
   val defaultTempDirectory: String = "./tmp"
   val defaultLogsDirectory: String = "./logs"
   val defaultContext: String = "/"
-  val defaultWebappLocation: String = new WebAppContext().getClass.getClassLoader.getResource("webapp").toExternalForm
+  val defaultWebappLocation: String = Option(new WebAppContext().getClass.getClassLoader.getResource("webapp")).map(_.toExternalForm).getOrElse(throw new RuntimeException("webapp folder not found on classpath!"))
   val defaultOutputBufferSize = 5000000
   val defaultIdleTimout = 30000
 }

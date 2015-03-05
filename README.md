@@ -14,7 +14,14 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    libraryDependencies += "io.shaka" %% "scala-embedded-jetty" % "3"
+    val jettyVersion="9.2.9.v20150224"
+
+    libraryDependencies ++= Seq(
+      "io.shaka"            %%  "scala-embedded-jetty"  % "6"
+      "org.eclipse.jetty"   %   "jetty-webapp"          % jettyVersion,
+      "org.eclipse.jetty"   %   "jetty-plus"            % jettyVersion,
+      "org.eclipse.jetty"   %   "jetty-servlets"        % jettyVersion,
+
 
 Starting a server
 
