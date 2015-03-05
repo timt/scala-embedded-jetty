@@ -1,12 +1,12 @@
 package io.shaka.jetty
 
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import io.shaka.http.Http.http
 import io.shaka.http.Request.GET
 import io.shaka.http.Status.OK
 import io.shaka.jetty.EmbeddedJetty.jetty
-import org.eclipse.jetty.server.{Request, Handler}
+import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.scalatest.FunSuite
 

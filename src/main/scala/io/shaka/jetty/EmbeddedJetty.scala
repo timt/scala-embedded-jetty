@@ -7,21 +7,26 @@ import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.webapp.WebAppContext
 
-object EmbeddedJetty{
+object EmbeddedJetty {
   type ToLog = String => Unit
   private val doNothingLog: ToLog = _ => ()
+
   def jetty: EmbeddedJetty = jetty(JettyConfiguration())
+
   def jetty(port: Int): EmbeddedJetty = jetty(JettyConfiguration(port = port))
+
   def jetty(config: JettyConfiguration, log: ToLog = doNothingLog): EmbeddedJetty = new EmbeddedJetty(config, log)
 }
 
 class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
   private val server: Server = new Server()
-  private val httpConnector: ServerConnector = createConnector
-  private val handlers = new HandlerCollection()
-  handlers.setHandlers(Array(createWebAppHandler, loggingHandler))
+
+  private val build: JettyComponentBuilder = JettyComponentBuilder(config, otherLog)
+  private val httpConnector: ServerConnector = build.httpConnector(server)
   server.setConnectors(Array(httpConnector))
-  server.setHandler(handlers)
+  server.setHandler(build.handlersContainer(
+    build.webAppHandler,
+    build.loggingHandler))
   server.setStopAtShutdown(true)
 
   lazy val port = httpConnector.getLocalPort
@@ -52,7 +57,15 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     this
   }
 
-  private def createConnector = {
+  private def log: ToLog = (message) => {
+    otherLog(message)
+    println(message)
+  }
+}
+
+case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
+
+  def httpConnector(server: Server) = {
     val httpConfiguration = new HttpConfiguration()
     httpConfiguration.setOutputBufferSize(config.outputBufferSize)
     val connector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration))
@@ -61,20 +74,18 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     connector
   }
 
-
-  private def createWebAppHandler: WebAppContext = {
-      val warPath = config.webappLocation
-      log(s"EMBEDDED JETTY >>> running webapp from $warPath")
-      val ctx = new WebAppContext()
-      ctx.setContextPath(config.context)
-      ctx.setTempDirectory(new File(config.tempDirectory))
-      log("EMBEDDED JETTY >>> using temp directory: " + ctx.getTempDirectory)
-      ctx.setServer(server)
-      ctx.setWar(warPath)
-      ctx
+  def webAppHandler: WebAppContext = {
+    val warPath = config.webappLocation
+    log(s"EMBEDDED JETTY >>> running webapp from $warPath")
+    val ctx = new WebAppContext()
+    ctx.setContextPath(config.context)
+    ctx.setTempDirectory(new File(config.tempDirectory))
+    log("EMBEDDED JETTY >>> using temp directory: " + ctx.getTempDirectory)
+    ctx.setWar(warPath)
+    ctx
   }
 
-  private def loggingHandler: RequestLogHandler = {
+  def loggingHandler: RequestLogHandler = {
     val requestLog = new NCSARequestLog()
     new File(config.logsDirectory).mkdirs()
     requestLog.setFilename("logs/yyyy_mm_dd-request.log")
@@ -89,8 +100,10 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     requestLogHandler
   }
 
-  private def log: ToLog = (message) => {
-    otherLog(message)
-    println(message)
+  def handlersContainer(handlers: Handler*): HandlerCollection ={
+    val handlerCollection = new HandlerCollection(true)
+    handlerCollection.setHandlers(handlers.toArray)
+    handlerCollection
   }
+
 }
