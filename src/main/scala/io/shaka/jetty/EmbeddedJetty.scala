@@ -1,9 +1,10 @@
 package io.shaka.jetty
 
-import EmbeddedJetty.ToLog
 import java.io.File
+
+import io.shaka.jetty.EmbeddedJetty.ToLog
+import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
-import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty{
@@ -15,15 +16,17 @@ object EmbeddedJetty{
 }
 
 class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
-  private val server = new Server()
-  private val connector = createConnector
-  server.setConnectors(Array(connector))
-  server.setHandler(createHandlers)
+  private val server: Server = new Server()
+  private val httpConnector: ServerConnector = createConnector
+  private val handlers = new HandlerCollection()
+  handlers.setHandlers(Array(createWebAppHandler, loggingHandler))
+  server.setConnectors(Array(httpConnector))
+  server.setHandler(handlers)
   server.setStopAtShutdown(true)
 
-  lazy val port = connector.getLocalPort
+  lazy val port = httpConnector.getLocalPort
 
-  def start() = {
+  def start(): EmbeddedJetty = {
     val startedAt = System.nanoTime()
     try {
       server.start()
@@ -39,11 +42,15 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     this
   }
 
-  def stop() = {
+  def stop(): EmbeddedJetty = {
     server.stop()
     this
   }
 
+  def addHandler(s: String, handler: Handler): EmbeddedJetty = {
+
+    this
+  }
 
   private def createConnector = {
     val httpConfiguration = new HttpConfiguration()
@@ -55,8 +62,7 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
   }
 
 
-  private def createHandlers = {
-    val context = {
+  private def createWebAppHandler: WebAppContext = {
       val warPath = config.webappLocation
       log(s"EMBEDDED JETTY >>> running webapp from $warPath")
       val ctx = new WebAppContext()
@@ -66,14 +72,9 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
       ctx.setServer(server)
       ctx.setWar(warPath)
       ctx
-    }
-
-    val handlers = new HandlerCollection()
-    handlers.setHandlers(Array(context, loggingHandler(handlers)))
-    handlers
   }
 
-  private def loggingHandler(handlers: HandlerCollection) = {
+  private def loggingHandler: RequestLogHandler = {
     val requestLog = new NCSARequestLog()
     new File(config.logsDirectory).mkdirs()
     requestLog.setFilename("logs/yyyy_mm_dd-request.log")
