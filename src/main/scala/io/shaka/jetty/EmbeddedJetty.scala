@@ -4,7 +4,7 @@ import java.io.File
 
 import io.shaka.jetty.EmbeddedJetty.ToLog
 import org.eclipse.jetty.server._
-import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
+import org.eclipse.jetty.server.handler.{ContextHandlerCollection, ContextHandler, HandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {
@@ -20,13 +20,14 @@ object EmbeddedJetty {
 
 class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
   private val server: Server = new Server()
-
   private val build: JettyComponentBuilder = JettyComponentBuilder(config, otherLog)
+  private val handlers: ContextHandlerCollection = new ContextHandlerCollection()
+  handlers.addHandler(build.loggingHandler)
+  handlers.addHandler(build.webAppHandler)
+
   private val httpConnector: ServerConnector = build.httpConnector(server)
   server.setConnectors(Array(httpConnector))
-  server.setHandler(build.handlersContainer(
-    build.webAppHandler,
-    build.loggingHandler))
+  server.setHandler(handlers)
   server.setStopAtShutdown(true)
 
   lazy val port = httpConnector.getLocalPort
@@ -52,8 +53,11 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     this
   }
 
-  def addHandler(s: String, handler: Handler): EmbeddedJetty = {
-
+  def addHandler(path: String, handler: Handler): EmbeddedJetty = {
+    val contextHander = new ContextHandler(path)
+    contextHander.setHandler(handler)
+    handlers.addHandler(contextHander)
+    if(server.isStarted) contextHander.start()
     this
   }
 
@@ -98,12 +102,6 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
     val requestLogHandler = new RequestLogHandler()
     requestLogHandler.setRequestLog(requestLog)
     requestLogHandler
-  }
-
-  def handlersContainer(handlers: Handler*): HandlerCollection ={
-    val handlerCollection = new HandlerCollection(true)
-    handlerCollection.setHandlers(handlers.toArray)
-    handlerCollection
   }
 
 }

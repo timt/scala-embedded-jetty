@@ -18,8 +18,16 @@ class EmbeddedJettySpec extends FunSuite {
 
   jettyTest("can add another context handler"){ jetty =>
     jetty.addHandler("/bob", new AbstractHandler() {
-      override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = ???
+      override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse) = {
+        response.setContentType("text/html; charset=utf-8")
+        response.setStatus(HttpServletResponse.SC_OK)
+        val out = response.getWriter()
+        out.println("<h1>Hello World</h1>")
+        baseRequest.setHandled(true)
+      }
     })
+    val response = http(GET(s"http://localhost:${jetty.port}/bob/"))
+    assert(response.status === OK)
   }
 
   def jettyTest(testName: String)(block: (EmbeddedJetty) => Unit): Unit ={
