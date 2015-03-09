@@ -21,9 +21,7 @@ object EmbeddedJetty {
 class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
   private val server: Server = new Server()
   private val build: JettyComponentBuilder = JettyComponentBuilder(config, otherLog)
-  private val handlers: ContextHandlerCollection = new ContextHandlerCollection()
-  handlers.addHandler(build.loggingHandler)
-  handlers.addHandler(build.webAppHandler)
+  private val handlers: ContextHandlerCollection = build.handlers
 
   private val httpConnector: ServerConnector = build.httpConnector(server)
   server.setConnectors(Array(httpConnector))
@@ -102,6 +100,13 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
     val requestLogHandler = new RequestLogHandler()
     requestLogHandler.setRequestLog(requestLog)
     requestLogHandler
+  }
+
+  def handlers = {
+    val handlers = new ContextHandlerCollection()
+    handlers.addHandler(loggingHandler)
+    handlers.addHandler(webAppHandler)
+    handlers
   }
 
 }
