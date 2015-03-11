@@ -4,7 +4,7 @@ import java.io.File
 
 import io.shaka.jetty.EmbeddedJetty.ToLog
 import org.eclipse.jetty.server._
-import org.eclipse.jetty.server.handler.{ContextHandlerCollection, ContextHandler, HandlerCollection, RequestLogHandler}
+import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {
@@ -79,12 +79,12 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
   def webAppHandler: WebAppContext = {
     val warPath = config.webappLocation
     log(s"EMBEDDED JETTY >>> running webapp from $warPath")
-    val ctx = new WebAppContext()
-    ctx.setContextPath(config.context)
-    ctx.setTempDirectory(new File(config.tempDirectory))
-    log("EMBEDDED JETTY >>> using temp directory: " + ctx.getTempDirectory)
-    ctx.setWar(warPath)
-    ctx
+    val webAppContext = new WebAppContext()
+    webAppContext.setContextPath(config.context)
+    webAppContext.setTempDirectory(new File(config.tempDirectory))
+    log("EMBEDDED JETTY >>> using temp directory: " + webAppContext.getTempDirectory)
+    webAppContext.setWar(warPath)
+    webAppContext
   }
 
   def loggingHandler: RequestLogHandler = {
