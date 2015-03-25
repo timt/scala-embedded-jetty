@@ -6,6 +6,8 @@ import io.shaka.http.Http.http
 import io.shaka.http.Request.GET
 import io.shaka.http.Status.OK
 import io.shaka.jetty.EmbeddedJetty.jetty
+import org.eclipse.jetty.http.HttpStatus
+import org.eclipse.jetty.http.HttpStatus.OK_200
 import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.scalatest.FunSuite
@@ -17,7 +19,7 @@ class EmbeddedJettySpec extends FunSuite {
   }
 
   jettyTest("can add another context handler"){ jetty =>
-    jetty.addHandler("/bob", new AbstractHandler() {
+    jetty.addJettyHandler("/bob", new AbstractHandler() {
       override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse) = {
         response.setContentType("text/html; charset=utf-8")
         response.setStatus(HttpServletResponse.SC_OK)

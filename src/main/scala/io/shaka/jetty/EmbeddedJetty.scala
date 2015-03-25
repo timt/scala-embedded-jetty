@@ -51,7 +51,7 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     this
   }
 
-  def addHandler(path: String, handler: Handler): EmbeddedJetty = {
+  def addJettyHandler(path: String, handler: Handler): EmbeddedJetty = {
     val contextHander = new ContextHandler(path)
     contextHander.setHandler(handler)
     handlers.addHandler(contextHander)
