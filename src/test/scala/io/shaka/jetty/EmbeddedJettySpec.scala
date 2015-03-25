@@ -6,6 +6,7 @@ import io.shaka.http.Http.http
 import io.shaka.http.Request.GET
 import io.shaka.http.Status.OK
 import io.shaka.jetty.EmbeddedJetty.jetty
+import io.shaka.jetty.Handlers.Response
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.http.HttpStatus.OK_200
 import org.eclipse.jetty.server.Request
@@ -18,8 +19,8 @@ class EmbeddedJettySpec extends FunSuite {
     assert(response.status === OK)
   }
 
-  jettyTest("can add another context handler"){ jetty =>
-    jetty.addJettyHandler("/bob", new AbstractHandler() {
+  jettyTest("can add additional context handler using a jetty handler"){ jetty =>
+    jetty.addJettyHandler("/rob", new AbstractHandler() {
       override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse) = {
         response.setContentType("text/html; charset=utf-8")
         response.setStatus(HttpServletResponse.SC_OK)
@@ -28,8 +29,18 @@ class EmbeddedJettySpec extends FunSuite {
         baseRequest.setHandled(true)
       }
     })
+    val response = http(GET(s"http://localhost:${jetty.port}/rob/"))
+    assert(response.status === OK)
+    assert(response.entityAsString === "<h1>Hello World</h1>\n")
+  }
+
+  jettyTest("can add additional context handler using a simple Request=>Response handler"){ jetty =>
+    jetty.addHandler("/bob", (request) => {
+      Response(entity = Some("<h1>Hello World</h1>".getBytes))
+    })
     val response = http(GET(s"http://localhost:${jetty.port}/bob/"))
     assert(response.status === OK)
+    assert(response.entityAsString === "<h1>Hello World</h1>")
   }
 
   def jettyTest(testName: String)(block: (EmbeddedJetty) => Unit): Unit ={
