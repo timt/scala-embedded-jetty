@@ -1,13 +1,10 @@
 package io.shaka.jetty
 
 import java.io.File
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 
 import io.shaka.jetty.EmbeddedJetty.ToLog
-import io.shaka.jetty.Handlers
-import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server._
-import org.eclipse.jetty.server.handler.{AbstractHandler, ContextHandler, ContextHandlerCollection, RequestLogHandler}
+import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {

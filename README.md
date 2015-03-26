@@ -17,7 +17,7 @@ Add the following lines to your build.sbt
     val jettyVersion="9.2.9.v20150224"
 
     libraryDependencies ++= Seq(
-      "io.shaka"            %%  "scala-embedded-jetty"  % "8"
+      "io.shaka"            %%  "scala-embedded-jetty"  % "9"
       "org.eclipse.jetty"   %   "jetty-webapp"          % jettyVersion,
       "org.eclipse.jetty"   %   "jetty-plus"            % jettyVersion,
       "org.eclipse.jetty"   %   "jetty-servlets"        % jettyVersion,
@@ -40,6 +40,21 @@ Customise configuration
 Stopping the server
 
     embeddedJetty.stop()
+
+Providing a custom context handler
+
+    import io.shaka.jetty.Handlers._
+    jetty
+        .addHandler("/my-context", (request: Request) => {
+          Response(status = 200, entity = Some("<h1>Hello World</h1>".getBytes))
+        })
+        .start()
+
+For more examples see
+
+* [HandlerSpec.scala](https://github.com/timt/scala-embedded-jetty/blob/master/src/test/scala/io/shaka/jetty/HandlerSpec.scala)
+* [EmbeddedJettySpec.scala](https://github.com/timt/scala-embedded-jetty/blob/master/src/test/scala/io/shaka/jetty/EmbeddedJettySpec.scala)
+
 
 Code license
 ------------
