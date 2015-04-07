@@ -19,8 +19,8 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-servlets" % jettyVersion % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "io.shaka" %% "naive-http" % "66" % "test"
+  "io.shaka" %% "naive-http" % "69",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)
@@ -42,10 +42,10 @@ homepage := Some(url("https://github.com/timt/scala-embedded-jetty"))
 licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
 pomExtra :=
-    <scm>
-      <url>git@github.com:timt/scala-embedded-jetty.git</url>
-      <connection>scm:git:git@github.com:timt/scala-embedded-jetty.git</connection>
-    </scm>
+  <scm>
+    <url>git@github.com:timt/scala-embedded-jetty.git</url>
+    <connection>scm:git:git@github.com:timt/scala-embedded-jetty.git</connection>
+  </scm>
     <developers>
       <developer>
         <id>timt</id>

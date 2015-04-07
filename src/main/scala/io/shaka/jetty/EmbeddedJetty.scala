@@ -2,6 +2,7 @@ package io.shaka.jetty
 
 import java.io.File
 
+import io.shaka.http.Http.HttpHandler
 import io.shaka.jetty.EmbeddedJetty.ToLog
 import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
@@ -51,7 +52,7 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     this
   }
 
-  def addHandler(path: String, handler: Handlers.Handler) = addJettyHandler(path, Handlers.adaptToJettyHandler(handler))
+  def addHandler(path: String, handler: HttpHandler) = addJettyHandler(path, Handlers.adaptToJettyHandler(handler))
 
   def addJettyHandler(path: String, handler: Handler): EmbeddedJetty = {
     val contextHander = new ContextHandler(path)

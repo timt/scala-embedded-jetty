@@ -4,8 +4,8 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import io.shaka.http.Http.http
 import io.shaka.http.Request.GET
+import io.shaka.http.Response.respond
 import io.shaka.http.Status.OK
-import io.shaka.jetty.Handlers.Response
 import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server.handler.AbstractHandler
 
@@ -17,7 +17,7 @@ class EmbeddedJettySpec extends JettySpec {
 
   jettyTest("additional context handler using a simple Request=>Response handler"){ jetty =>
     jetty.addHandler("/bob", (request) => {
-      Response(entity = Some("<h1>Hello World</h1>".getBytes))
+      respond("<h1>Hello World</h1>")
     })
     val response = http(GET(s"http://localhost:${jetty.port}/bob/"))
     assert(response.status === OK)
