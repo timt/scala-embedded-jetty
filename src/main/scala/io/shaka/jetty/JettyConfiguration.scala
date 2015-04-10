@@ -1,22 +1,18 @@
 package io.shaka.jetty
 
-import JettyConfigurationDefaults.{defaultLogsDirectory, defaultContext, defaultOutputBufferSize, defaultIdleTimout, defaultTempDirectory, defaultWebappLocation}
-import org.eclipse.jetty.webapp.WebAppContext
+import JettyConfigurationDefaults._
 
 case class JettyConfiguration(
-                               port: Int = 0,
-                               tempDirectory: String = defaultTempDirectory,
+                               port: Int = defaultPort,
                                logsDirectory: String = defaultLogsDirectory,
-                               context: String = defaultContext,
-                               webappLocation: String = defaultWebappLocation,
                                outputBufferSize: Int = defaultOutputBufferSize,
-                               idleTimeout: Int = defaultIdleTimout)
+                               idleTimeout: Int = defaultIdleTimeout,
+                               contexts: Traversable[ContextConfiguration] = defaultContextConfiguration)
 
 object JettyConfigurationDefaults {
-  val defaultTempDirectory: String = "./tmp"
+  val defaultPort = 0
   val defaultLogsDirectory: String = "./logs"
-  val defaultContext: String = "/"
-  val defaultWebappLocation: String = Option(new WebAppContext().getClass.getClassLoader.getResource("webapp")).map(_.toExternalForm).getOrElse(throw new RuntimeException("webapp folder not found on classpath!"))
   val defaultOutputBufferSize = 5000000
-  val defaultIdleTimout = 30000
+  val defaultIdleTimeout = 30000
+  def defaultContextConfiguration = Seq(ContextConfiguration(webappLocation = ContextConfiguration.classpathResource("webapp")))
 }

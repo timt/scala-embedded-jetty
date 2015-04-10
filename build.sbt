@@ -9,11 +9,11 @@ organization := "io.shaka"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
-crossScalaVersions := Seq("2.10.4", "2.11.5")
+crossScalaVersions := Seq("2.10.5", "2.11.6")
 
-val jettyVersion = "9.2.9.v20150224"
+val jettyVersion = "9.2.10.v20150310"
 
 libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",

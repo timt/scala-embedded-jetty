@@ -5,8 +5,8 @@ A scala shim for running embedded jetty (http only currently)
 Requirements
 ------------
 
-* [scala](http://www.scala-lang.org) 2.10.4
-* [scala](http://www.scala-lang.org) 2.11.5
+* [scala](http://www.scala-lang.org) 2.10.5
+* [scala](http://www.scala-lang.org) 2.11.6
 
 Usage
 -----
@@ -14,7 +14,7 @@ Add the following lines to your build.sbt
 
     resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
-    val jettyVersion="9.2.9.v20150224"
+    val jettyVersion="9.2.10.v20150310"
 
     libraryDependencies ++= Seq(
       "io.shaka"            %%  "scala-embedded-jetty"  % "10"

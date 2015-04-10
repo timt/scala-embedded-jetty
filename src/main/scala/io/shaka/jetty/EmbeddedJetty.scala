@@ -79,12 +79,12 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
     connector
   }
 
-  def webAppHandler: WebAppContext = {
-    val warPath = config.webappLocation
+  def webAppHandler(contextConfig: ContextConfiguration): WebAppContext = {
+    val warPath = contextConfig.webappLocation
     log(s"EMBEDDED JETTY >>> running webapp from $warPath")
     val webAppContext = new WebAppContext()
-    webAppContext.setContextPath(config.context)
-    webAppContext.setTempDirectory(new File(config.tempDirectory))
+    webAppContext.setContextPath(contextConfig.context)
+    webAppContext.setTempDirectory(new File(contextConfig.tempDirectory))
     log("EMBEDDED JETTY >>> using temp directory: " + webAppContext.getTempDirectory)
     webAppContext.setWar(warPath)
     webAppContext
@@ -108,7 +108,9 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
   def handlers = {
     val handlers = new ContextHandlerCollection()
     handlers.addHandler(loggingHandler)
-    handlers.addHandler(webAppHandler)
+    config.contexts.foreach { contextConfig =>
+      handlers.addHandler(webAppHandler(contextConfig))
+    }
     handlers
   }
 
