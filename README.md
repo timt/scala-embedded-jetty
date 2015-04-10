@@ -17,7 +17,7 @@ Add the following lines to your build.sbt
     val jettyVersion="9.2.10.v20150310"
 
     libraryDependencies ++= Seq(
-      "io.shaka"            %%  "scala-embedded-jetty"  % "10"
+      "io.shaka"            %%  "scala-embedded-jetty"  % "15"
       "org.eclipse.jetty"   %   "jetty-webapp"          % jettyVersion,
       "org.eclipse.jetty"   %   "jetty-plus"            % jettyVersion,
       "org.eclipse.jetty"   %   "jetty-servlets"        % jettyVersion,
@@ -34,7 +34,7 @@ Starting a server
 Customise configuration
 
     import io.shaka.jetty.JettyConfiguration
-    val jettyConfiguration = JettyConfiguration(port = 1234, webappDirectory = "src/resource/webapp")
+    val jettyConfiguration = JettyConfiguration(port = 1234, logsDirectory = "src/resource/logs")
     val embeddedJetty = jetty(jettyConfiguration).start()
 
 Stopping the server
