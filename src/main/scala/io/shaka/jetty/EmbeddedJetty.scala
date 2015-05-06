@@ -10,18 +10,18 @@ import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {
   type ToLog = String => Unit
-  private val doNothingLog: ToLog = _ => ()
+  private val printlnLog: ToLog = (s) => println(s)
 
   def jetty: EmbeddedJetty = jetty(JettyConfiguration())
 
   def jetty(port: Int): EmbeddedJetty = jetty(JettyConfiguration(port = port))
 
-  def jetty(config: JettyConfiguration, log: ToLog = doNothingLog): EmbeddedJetty = new EmbeddedJetty(config, log)
+  def jetty(config: JettyConfiguration, log: ToLog = printlnLog): EmbeddedJetty = new EmbeddedJetty(config, log)
 }
 
-class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
+class EmbeddedJetty private(config: JettyConfiguration, log: ToLog) {
   private val server: Server = new Server()
-  private val build: JettyComponentBuilder = JettyComponentBuilder(config, otherLog)
+  private val build: JettyComponentBuilder = JettyComponentBuilder(config, log)
   private val handlers: ContextHandlerCollection = build.handlers
 
   private val httpConnector: ServerConnector = build.httpConnector(server)
@@ -60,11 +60,6 @@ class EmbeddedJetty private(config: JettyConfiguration, otherLog: ToLog) {
     handlers.addHandler(contextHander)
     if(server.isStarted) contextHander.start()
     this
-  }
-
-  private def log: ToLog = (message) => {
-    otherLog(message)
-    println(message)
   }
 }
 
