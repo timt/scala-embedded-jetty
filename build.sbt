@@ -15,6 +15,8 @@ crossScalaVersions := Seq("2.10.5", "2.11.6")
 
 val jettyVersion = "9.2.10.v20150310"
 
+externalResolvers := Seq("Bintray JCenter" at "https://jcenter.bintray.com/")
+
 libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
