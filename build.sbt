@@ -1,7 +1,6 @@
-import bintray.Keys._
+import bintray.Keys.{bintray, bintrayOrganization, repository}
 
 import scala.util.Try
-
 
 name := "scala-embedded-jetty"
 

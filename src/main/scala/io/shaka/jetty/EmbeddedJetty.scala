@@ -4,8 +4,8 @@ import java.io.File
 
 import io.shaka.http.Http.HttpHandler
 import io.shaka.jetty.EmbeddedJetty.ToLog
-import org.eclipse.jetty.server._
 import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
+import org.eclipse.jetty.server.{Handler, HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {

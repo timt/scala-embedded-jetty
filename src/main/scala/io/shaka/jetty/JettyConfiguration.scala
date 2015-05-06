@@ -1,6 +1,6 @@
 package io.shaka.jetty
 
-import JettyConfigurationDefaults._
+import io.shaka.jetty.JettyConfigurationDefaults.{defaultContextConfiguration, defaultIdleTimeout, defaultLogsDirectory, defaultOutputBufferSize, someFreePort}
 
 case class JettyConfiguration(
                                port: Int = someFreePort,

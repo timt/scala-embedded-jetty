@@ -5,7 +5,7 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import io.shaka.http.Http.HttpHandler
 import io.shaka.http.HttpHeader.httpHeader
 import io.shaka.http.Method.method
-import io.shaka.http._
+import io.shaka.http.{Entity, Headers, Request, Response}
 
 object Handlers {
 

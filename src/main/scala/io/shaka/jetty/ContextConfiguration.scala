@@ -1,7 +1,7 @@
 package io.shaka.jetty
 
+import io.shaka.jetty.ContextConfiguration.{defaultContext, defaultTempDirectory}
 import org.eclipse.jetty.webapp.WebAppContext
-import ContextConfiguration._
 
 case class ContextConfiguration(
                                 tempDirectory: String = defaultTempDirectory,
