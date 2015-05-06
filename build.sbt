@@ -21,7 +21,7 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
   "org.eclipse.jetty" % "jetty-servlets" % jettyVersion % "provided",
-  "io.shaka" %% "naive-http" % "69",
+  "io.shaka" %% "naive-http" % "72",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
