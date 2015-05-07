@@ -22,11 +22,13 @@ object EmbeddedJetty {
 class EmbeddedJetty private(config: JettyConfiguration, log: ToLog) {
   private val server: Server = new Server()
   private val build: JettyComponentBuilder = JettyComponentBuilder(config, log)
-  private val handlers: ContextHandlerCollection = build.handlers
+  private val contextHandlers: ContextHandlerCollection = build.contextHandlers
+  private val requestLogHandler: RequestLogHandler = build.requestLogHandler
+  requestLogHandler.setHandler(contextHandlers)
 
   private val httpConnector: ServerConnector = build.httpConnector(server)
   server.setConnectors(Array(httpConnector))
-  server.setHandler(handlers)
+  server.setHandler(requestLogHandler)
   server.setStopAtShutdown(true)
 
   lazy val port = httpConnector.getLocalPort
@@ -55,10 +57,10 @@ class EmbeddedJetty private(config: JettyConfiguration, log: ToLog) {
   def addHandler(path: String, handler: HttpHandler) = addJettyHandler(path, Handlers.adaptToJettyHandler(handler))
 
   def addJettyHandler(path: String, handler: Handler): EmbeddedJetty = {
-    val contextHander = new ContextHandler(path)
-    contextHander.setHandler(handler)
-    handlers.addHandler(contextHander)
-    if(server.isStarted) contextHander.start()
+    val contextHandler = new ContextHandler(path)
+    contextHandler.setHandler(handler)
+    contextHandlers.addHandler(contextHandler)
+    if (server.isStarted) contextHandler.start()
     this
   }
 }
@@ -85,7 +87,7 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
     webAppContext
   }
 
-  def loggingHandler: RequestLogHandler = {
+  def requestLogHandler: RequestLogHandler = {
     val requestLog = new NCSARequestLog()
     new File(config.logsDirectory).mkdirs()
     requestLog.setFilename("logs/yyyy_mm_dd-request.log")
@@ -95,18 +97,18 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
     requestLog.setExtended(true)
     requestLog.setLogCookies(false)
     requestLog.setLogTimeZone("GMT")
+
     val requestLogHandler = new RequestLogHandler()
     requestLogHandler.setRequestLog(requestLog)
     requestLogHandler
   }
 
-  def handlers = {
-    val handlers = new ContextHandlerCollection()
-    handlers.addHandler(loggingHandler)
+  def contextHandlers: ContextHandlerCollection = {
+    val contexts = new ContextHandlerCollection()
     config.contexts.foreach { contextConfig =>
-      handlers.addHandler(webAppHandler(contextConfig))
+      contexts.addHandler(webAppHandler(contextConfig))
     }
-    handlers
+    contexts
   }
-
+  
 }
