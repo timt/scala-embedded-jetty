@@ -15,7 +15,7 @@ object EmbeddedJetty {
   private def ncsaFileRequestLog(logsDirectory: String): RequestLog = {
     val requestLog = new NCSARequestLog()
     new File(logsDirectory).mkdirs()
-    requestLog.setFilename("logs/yyyy_mm_dd-request.log")
+    requestLog.setFilename(s"$logsDirectory/yyyy_mm_dd-request.log")
     requestLog.setFilenameDateFormat("yyyy_MM_dd")
     requestLog.setRetainDays(30)
     requestLog.setAppend(true)
