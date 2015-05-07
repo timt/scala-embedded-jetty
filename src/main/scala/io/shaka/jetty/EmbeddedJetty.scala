@@ -5,23 +5,39 @@ import java.io.File
 import io.shaka.http.Http.HttpHandler
 import io.shaka.jetty.EmbeddedJetty.ToLog
 import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
-import org.eclipse.jetty.server.{Handler, HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
+import org.eclipse.jetty.server.{RequestLog, Handler, HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
 import org.eclipse.jetty.webapp.WebAppContext
 
 object EmbeddedJetty {
   type ToLog = String => Unit
-  private val printlnLog: ToLog = (s) => println(s)
+  val printlnLog: ToLog = (s) => println(s)
 
+  private def ncsaFileRequestLog(logsDirectory: String): RequestLog = {
+    val requestLog = new NCSARequestLog()
+    new File(logsDirectory).mkdirs()
+    requestLog.setFilename("logs/yyyy_mm_dd-request.log")
+    requestLog.setFilenameDateFormat("yyyy_MM_dd")
+    requestLog.setRetainDays(30)
+    requestLog.setAppend(true)
+    requestLog.setExtended(true)
+    requestLog.setLogCookies(false)
+    requestLog.setLogTimeZone("GMT")
+    
+    requestLog
+  }
+  
   def jetty: EmbeddedJetty = jetty(JettyConfiguration())
 
   def jetty(port: Int): EmbeddedJetty = jetty(JettyConfiguration(port = port))
 
-  def jetty(config: JettyConfiguration, log: ToLog = printlnLog): EmbeddedJetty = new EmbeddedJetty(config, log)
+  def jetty(config: JettyConfiguration, log: ToLog = printlnLog): EmbeddedJetty = jetty(config, log, ncsaFileRequestLog(config.logsDirectory))
+
+  def jetty(config: JettyConfiguration, log: ToLog, requestLog: RequestLog): EmbeddedJetty = new EmbeddedJetty(config, log, requestLog)
 }
 
-class EmbeddedJetty private(config: JettyConfiguration, log: ToLog) {
+class EmbeddedJetty private(config: JettyConfiguration, log: ToLog, requestLog: RequestLog) {
   private val server: Server = new Server()
-  private val build: JettyComponentBuilder = JettyComponentBuilder(config, log)
+  private val build: JettyComponentBuilder = JettyComponentBuilder(config, log, requestLog)
   private val contextHandlers: ContextHandlerCollection = build.contextHandlers
   private val requestLogHandler: RequestLogHandler = build.requestLogHandler
   requestLogHandler.setHandler(contextHandlers)
@@ -65,7 +81,7 @@ class EmbeddedJetty private(config: JettyConfiguration, log: ToLog) {
   }
 }
 
-case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
+case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog, requestLog: RequestLog) {
 
   def httpConnector(server: Server) = {
     val httpConfiguration = new HttpConfiguration()
@@ -88,16 +104,6 @@ case class JettyComponentBuilder(config: JettyConfiguration, log: ToLog) {
   }
 
   def requestLogHandler: RequestLogHandler = {
-    val requestLog = new NCSARequestLog()
-    new File(config.logsDirectory).mkdirs()
-    requestLog.setFilename("logs/yyyy_mm_dd-request.log")
-    requestLog.setFilenameDateFormat("yyyy_MM_dd")
-    requestLog.setRetainDays(30)
-    requestLog.setAppend(true)
-    requestLog.setExtended(true)
-    requestLog.setLogCookies(false)
-    requestLog.setLogTimeZone("GMT")
-
     val requestLogHandler = new RequestLogHandler()
     requestLogHandler.setRequestLog(requestLog)
     requestLogHandler
