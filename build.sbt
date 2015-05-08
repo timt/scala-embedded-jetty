@@ -17,11 +17,11 @@ val jettyVersion = "9.2.10.v20150310"
 externalResolvers := Seq("Bintray JCenter" at "https://jcenter.bintray.com/")
 
 libraryDependencies ++= Seq(
-  "org.eclipse.jetty" % "jetty-webapp" % jettyVersion % "provided",
-  "org.eclipse.jetty" % "jetty-plus" % jettyVersion % "provided",
-  "org.eclipse.jetty" % "jetty-servlets" % jettyVersion % "provided",
-  "io.shaka" %% "naive-http" % "72",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "org.eclipse.jetty"   %   "jetty-webapp"      % jettyVersion  % "provided",
+  "org.eclipse.jetty"   %   "jetty-plus"        % jettyVersion  % "provided",
+  "org.eclipse.jetty"   %   "jetty-servlets"    % jettyVersion  % "provided",
+  "io.shaka"            %%  "naive-http-server" % "40",
+  "org.scalatest"       %%  "scalatest"         % "2.2.4"       % "test"
 )
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)
