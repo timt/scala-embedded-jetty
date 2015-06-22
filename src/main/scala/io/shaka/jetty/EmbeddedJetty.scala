@@ -4,7 +4,7 @@ import java.io.File
 
 import io.shaka.http.Http.HttpHandler
 import io.shaka.jetty.EmbeddedJetty.ToLog
-import org.eclipse.jetty.server.handler.{ContextHandler, ContextHandlerCollection, RequestLogHandler}
+import org.eclipse.jetty.server.handler.{HandlerWrapper, ContextHandler, ContextHandlerCollection, RequestLogHandler}
 import org.eclipse.jetty.server.{RequestLog, Handler, HttpConfiguration, HttpConnectionFactory, NCSARequestLog, Server, ServerConnector}
 import org.eclipse.jetty.webapp.WebAppContext
 
@@ -40,7 +40,8 @@ class EmbeddedJetty private(config: JettyConfiguration, log: ToLog, requestLog: 
   private val build: JettyComponentBuilder = JettyComponentBuilder(config, log, requestLog)
   private val contextHandlers: ContextHandlerCollection = build.contextHandlers
   private val requestLogHandler: RequestLogHandler = build.requestLogHandler
-  requestLogHandler.setHandler(contextHandlers)
+  private val interceptHandler = new InterceptHandler(contextHandlers)
+  requestLogHandler.setHandler(interceptHandler)
 
   private val httpConnector: ServerConnector = build.httpConnector(server)
   server.setConnectors(Array(httpConnector))
@@ -78,6 +79,19 @@ class EmbeddedJetty private(config: JettyConfiguration, log: ToLog, requestLog: 
     contextHandlers.addHandler(contextHandler)
     if (server.isStarted) contextHandler.start()
     this
+  }
+
+  def addInterceptHandler(handler: (Handler) => Handler): Unit ={
+    interceptHandler.withInterceptHandler(handler)
+  }
+}
+
+class InterceptHandler(underlying: Handler) extends HandlerWrapper{
+  setHandler(underlying)
+  def withInterceptHandler(newHandler: (Handler) => Handler): Unit = {
+    stop()
+    setHandler(newHandler(underlying))
+    start()
   }
 }
 
