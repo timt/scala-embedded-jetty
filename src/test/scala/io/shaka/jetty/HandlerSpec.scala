@@ -39,7 +39,7 @@ class HandlerSpec extends JettySpec {
       assert(request.entityAsString === """{"hello":"world"}""")
       Response.ok
     })
-    http(POST(s"http://localhost:${jetty.port}/bob/").entity("""{"hello":"world"}""")) hasStatus OK
+    http(POST(s"http://localhost:${jetty.port}/bob/").entity( """{"hello":"world"}""")) hasStatus OK
   }
 
   jettyTest("Responds with the status ") { jetty =>
@@ -71,12 +71,13 @@ class HandlerSpec extends JettySpec {
     jetty.addHandler("/bob", (request) => {
       respond("<h1>Hello World</h1>")
     })
-    jetty.addIntercept((requestResponse) =>  {
-        requestResponse.contentType(TEXT_HTML)
-        requestResponse.status(OK)
-        requestResponse.entity("<h1>Bye World</h1>")
-        requestResponse.markHandled()
-      }
+    jetty.addIntercept((requestResponse) => {
+      requestResponse
+        .contentType(TEXT_HTML)
+        .status(OK)
+        .entity("<h1>Bye World</h1>")
+        .markHandled()
+    }
     )
     val response = http(GET(s"http://localhost:${jetty.port}/bob/")) hasStatus OK
     assert(response.entityAsString === "<h1>Bye World</h1>")
