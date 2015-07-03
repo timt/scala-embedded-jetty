@@ -1,7 +1,5 @@
 package io.shaka.jetty
 
-import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
-
 import io.shaka.http.ContentType.{APPLICATION_JSON, TEXT_HTML, TEXT_PLAIN}
 import io.shaka.http.Http.http
 import io.shaka.http.HttpHeader.{ACCEPT, CONTENT_TYPE}
@@ -9,10 +7,6 @@ import io.shaka.http.Request.{GET, POST}
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.{ACCEPTED, OK}
 import io.shaka.http.{Method, Response, Status}
-import org.eclipse.jetty.server.Request
-import org.eclipse.jetty.server.handler.AbstractHandler
-
-import scala.util.Random
 
 class HandlerSpec extends JettySpec {
 
@@ -77,31 +71,24 @@ class HandlerSpec extends JettySpec {
     jetty.addHandler("/bob", (request) => {
       respond("<h1>Hello World</h1>")
     })
-    jetty.addInterceptHandler((handler) => new AbstractHandler {
-      override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse) = {
-        response.setContentType("text/html; charset=utf-8")
-        response.setStatus(HttpServletResponse.SC_OK)
-        val out = response.getWriter
-        out.print("<h1>Bye World</h1>")
-        baseRequest.setHandled(true)
+    jetty.addIntercept((requestResponse) =>  {
+        requestResponse.contentType(TEXT_HTML)
+        requestResponse.status(OK)
+        requestResponse.entity("<h1>Bye World</h1>")
+        requestResponse.markHandled()
       }
-    })
+    )
     val response = http(GET(s"http://localhost:${jetty.port}/bob/")) hasStatus OK
     assert(response.entityAsString === "<h1>Bye World</h1>")
   }
 
-  jettyTest("Can delegate to nextHandlerr") { jetty =>
+  jettyTest("Will pass through to nextHandler when not set to handled") { jetty =>
     jetty.addHandler("/bob", (request) => {
       respond("<h1>Hello World</h1>")
     })
-    jetty.addInterceptHandler((handler) => new AbstractHandler {
-      override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse) = {
-        handler.handle(target, baseRequest, request, response)
-      }
-    })
+    jetty.addIntercept((jettyResponseRequest) => ())
     val response = http(GET(s"http://localhost:${jetty.port}/bob/")) hasStatus OK
     assert(response.entityAsString === "<h1>Hello World</h1>")
-
   }
 
   implicit class ResponseTestPimps(response: io.shaka.http.Response) {
