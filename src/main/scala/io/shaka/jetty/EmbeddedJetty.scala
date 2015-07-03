@@ -81,7 +81,7 @@ class EmbeddedJetty private(config: JettyConfiguration, log: ToLog, requestLog: 
     this
   }
 
-  def addInterceptHandler(handler: (Handler) => Handler): Unit ={
+  def addInterceptHandler(handler: (Handler) => Handler): EmbeddedJetty = {
     interceptHandler.withInterceptHandler(handler)
     this
   }
