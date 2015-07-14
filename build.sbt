@@ -19,7 +19,7 @@ externalResolvers := Seq("Bintray JCenter" at "https://jcenter.bintray.com/")
 libraryDependencies ++= Seq(
   "org.eclipse.jetty"   %   "jetty-webapp"      % jettyVersion  % "provided",
   "org.eclipse.jetty"   %   "jetty-servlets"    % jettyVersion  % "provided",
-  "io.shaka"            %%  "naive-http-server" % "47",
+  "io.shaka"            %%  "naive-http"        % "74",
   "org.scalatest"       %%  "scalatest"         % "2.2.4"       % "test"
 )
 
