@@ -17,7 +17,7 @@ Add the following lines to your build.sbt
     val jettyVersion="9.2.10.v20150310"
 
     libraryDependencies ++= Seq(
-      "io.shaka"            %%  "scala-embedded-jetty"  % "15"
+      "io.shaka"            %%  "scala-embedded-jetty"  % "28"
       "io.shaka"            %%  "naive-http"            % "78",
       "org.eclipse.jetty"   %   "jetty-webapp"          % jettyVersion,
       "org.eclipse.jetty"   %   "jetty-plus"            % jettyVersion,
