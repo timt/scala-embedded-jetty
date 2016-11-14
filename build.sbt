@@ -8,9 +8,9 @@ organization := "io.shaka"
 
 version := Try(sys.env("LIB_VERSION")).getOrElse("1")
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.12.0"
 
-crossScalaVersions := Seq("2.10.5", "2.11.6")
+crossScalaVersions := Seq("2.11.8", "2.12.0")
 
 val jettyVersion = "9.2.11.v20150529"
 
@@ -19,8 +19,8 @@ externalResolvers := Seq("Bintray JCenter" at "https://jcenter.bintray.com/")
 libraryDependencies ++= Seq(
   "org.eclipse.jetty"   %   "jetty-webapp"      % jettyVersion  % "provided",
   "org.eclipse.jetty"   %   "jetty-servlets"    % jettyVersion  % "provided",
-  "io.shaka"            %%  "naive-http"        % "78"          % "provided",
-  "org.scalatest"       %%  "scalatest"         % "2.2.4"       % "test"
+  "io.shaka"            %%  "naive-http"        % "90"          % "provided",
+  "org.scalatest"       %%  "scalatest"         % "3.0.0"       % "test"
 )
 
 pgpPassphrase := Some(Try(sys.env("SECRET")).getOrElse("goaway").toCharArray)
