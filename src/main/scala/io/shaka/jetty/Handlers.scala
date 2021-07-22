@@ -1,7 +1,8 @@
 package io.shaka.jetty
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import scala.language.postfixOps
 
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import io.shaka.http.Http.HttpHandler
 import io.shaka.http.HttpHeader.httpHeader
 import io.shaka.http.Method.method
