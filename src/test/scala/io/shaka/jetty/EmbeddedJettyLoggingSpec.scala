@@ -12,7 +12,7 @@ import scala.collection.mutable
 class EmbeddedJettyLoggingSpec extends FunSuite {
 
   test("Override the logging") {
-    val logMessages = mutable.MutableList[String]()
+    val logMessages = mutable.ListBuffer[String]()
 
     val logSpy: ToLog = (message) ⇒ logMessages += message
 
@@ -25,7 +25,7 @@ class EmbeddedJettyLoggingSpec extends FunSuite {
   }
 
   test("Override the request logging") {
-    val logMessages = mutable.MutableList[String]()
+    val logMessages = mutable.ListBuffer[String]()
 
     val requestLogSpy: RequestLog = new AbstractNCSARequestLog {
       override def isEnabled = true
